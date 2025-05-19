@@ -8,6 +8,7 @@ export default function RechargeInterface() {
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(false);
   const [subscriberName, setSubscriberName] = useState("");
+  const [searchAmount, setSearchAmount] = useState("");
 
   const mobileNumber = sessionStorage.getItem("mobileNumber");
 
@@ -31,12 +32,23 @@ export default function RechargeInterface() {
       });
   }, []);
 
+  // Automatically switch to "All Plans" when a search amount is entered
+  useEffect(() => {
+    if (searchAmount !== "") {
+      setActiveTab("All Plans");
+    }
+  }, [searchAmount]);
+
   const tabs = ["All Plans", "Popular", "Validity", "Data", "Unlimited", "Special"];
 
-  const filteredPlans =
-    activeTab === "All Plans"
-      ? plans
-      : plans.filter((plan) => plan.category.toLowerCase() === activeTab.toLowerCase());
+  const filteredPlans = plans.filter((plan) => {
+    const matchesTab =
+      activeTab === "All Plans" ||
+      plan.category.toLowerCase() === activeTab.toLowerCase();
+    const matchesSearch =
+      searchAmount === "" || plan.price.toString() === searchAmount;
+    return matchesTab && matchesSearch;
+  });
 
   const handleLogout = () => {
     sessionStorage.clear();
@@ -137,6 +149,18 @@ export default function RechargeInterface() {
       <main className="container py-4">
         <h2 className="h5 fw-semibold mb-4">Recharge Plans</h2>
 
+        {/* Search bar above tabs */}
+        <div className="mb-3">
+          <input
+            type="number"
+            className="form-control"
+            placeholder="Search by amount (e.g. 199)"
+            value={searchAmount}
+            onChange={(e) => setSearchAmount(e.target.value)}
+          />
+        </div>
+
+        {/* Tabs below search bar */}
         <ul className="nav nav-tabs mb-4 overflow-auto flex-nowrap">
           {tabs.map((tab) => (
             <li className="nav-item" key={tab}>
@@ -150,6 +174,7 @@ export default function RechargeInterface() {
           ))}
         </ul>
 
+        {/* Plans */}
         <div className="row">
           {filteredPlans.length > 0 ? (
             filteredPlans.map((plan) => (
