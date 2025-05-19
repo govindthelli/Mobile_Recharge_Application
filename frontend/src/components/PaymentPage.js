@@ -84,6 +84,40 @@ const PaymentPage = () => {
       return navigate('/login');
     }
 
+    // Custom validations with toast
+    if (paymentMethod === 'upi') {
+      if (!upiId || !upiId.includes('@')) {
+        toast.error("Please enter a valid UPI ID.");
+        return;
+      }
+    } else if (paymentMethod === 'credit' || paymentMethod === 'debit') {
+      if (!/^\d{16}$/.test(cardNumber)) {
+        toast.error("Card number must be 16 digits.");
+        return;
+      }
+      if (!expiry.match(/^(0[1-9]|1[0-2])\/\d{2}$/)) {
+        toast.error("Expiry must be in MM/YY format.");
+        return;
+      }
+      if (!/^\d{3}$/.test(cvv)) {
+        toast.error("CVV must be 3 digits.");
+        return;
+      }
+    } else if (paymentMethod === 'bank') {
+      if (!selectedBank) {
+        toast.error("Please select a bank.");
+        return;
+      }
+      if (!/^\d{11,16}$/.test(accountNumber)) {
+        toast.error("Account number must be 11 to 16 digits.");
+        return;
+      }
+      if (!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifsc)) {
+        toast.error("Invalid IFSC code.");
+        return;
+      }
+    }
+
     setIsSubmitting(true);
 
     const paymentDetails =
@@ -103,7 +137,8 @@ const PaymentPage = () => {
         const { transactionId } = response.data;
         sessionStorage.setItem("paymentStatus", "success");
         sessionStorage.setItem("transactionId", transactionId);
-        navigate('/recharge-success');
+        toast.success("Payment successful! Redirecting...");
+        setTimeout(() => navigate('/recharge-success'), 2000);
       } else {
         throw new Error("Unexpected response format.");
       }
@@ -271,7 +306,6 @@ const PaymentPage = () => {
         </div>
       </div>
 
-      {/* Toast Notifications */}
       <ToastContainer position="top-center" autoClose={3000} />
     </div>
   );

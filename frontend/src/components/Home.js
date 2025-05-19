@@ -1,5 +1,5 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom'; 
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const App = () => {
   const navigate = useNavigate();
@@ -8,8 +8,18 @@ const App = () => {
       {/* Navbar */}
       <nav className="d-flex justify-content-between align-items-center p-3 bg-white shadow-sm">
         <h1 className="text-primary fw-bold fs-3">MobiComm</h1>
-       <button className="btn btn-dark" onClick={() => navigate("/login")}>login</button>
-       
+
+        <div className="d-flex gap-2">
+          <button className="btn btn-dark" onClick={() => navigate("/login")}>
+            Login
+          </button>
+          <button
+            className="btn btn-dark"
+            onClick={() => navigate("/register")}
+          >
+            Sign Up
+          </button>
+        </div>
       </nav>
 
       {/* Main content */}
@@ -17,14 +27,17 @@ const App = () => {
         {/* Hero Section */}
         <section
           className="text-white text-center py-5 px-3"
-          style={{ background: 'linear-gradient(90deg, #2563eb, #1d4ed8)' }}
+          style={{ background: "linear-gradient(90deg, #2563eb, #1d4ed8)" }}
         >
           <h2 className="fw-bold mb-3 display-5">MobiComm Services</h2>
           <p className="fs-5 mb-4">
-            The fastest and simplest way to recharge your prepaid mobile connection.
+            The fastest and simplest way to recharge your prepaid mobile
+            connection.
           </p>
           <div className="d-flex justify-content-center gap-3">
-            <button className="btn btn-dark" onClick={() => navigate("/login")}>Recharge Now</button>
+            <button className="btn btn-dark" onClick={() => navigate("/login")}>
+              Recharge Now
+            </button>
           </div>
         </section>
 
@@ -37,7 +50,8 @@ const App = () => {
                 <div className="fs-1 mb-2">⚡</div>
                 <h4 className="fw-semibold mb-2">Instant Recharges</h4>
                 <p className="text-secondary small">
-                  Recharge your mobile instantly with our fast processing system.
+                  Recharge your mobile instantly with our fast processing
+                  system.
                 </p>
               </div>
             </div>
@@ -65,7 +79,9 @@ const App = () => {
         {/* CTA Section */}
         <section className="text-center py-4">
           <h3 className="fw-semibold mb-3 fs-5">Ready to get started?</h3>
-          <button className="btn btn-dark" onClick={() => navigate("/login")}>Login Now</button>
+          <button className="btn btn-dark" onClick={() => navigate("/login")}>
+            Login Now
+          </button>
         </section>
       </main>
 

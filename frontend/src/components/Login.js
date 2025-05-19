@@ -50,8 +50,24 @@ const Login = () => {
   return (
     <div className="min-vh-100 bg-light d-flex flex-column">
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
-      <header className="bg-primary text-white py-3 px-4">
-        <h4 className="m-0 fw-bold">📱 Telecom Login Portal</h4>
+      
+      <header className="bg-primary text-white py-3 px-4 d-flex justify-content-between align-items-center">
+        <h4
+          className="m-0 fw-bold text-white"
+          role="button"
+          style={{ cursor: "pointer" }}
+          onClick={() => navigate("/")}
+        >
+          📱 Telecom Login Portal
+        </h4>
+        <button
+  className="btn btn-dark"
+  onClick={() => navigate("/")}
+>
+  Home
+</button>
+
+
       </header>
 
       <div className="flex-grow-1 d-flex justify-content-center align-items-center py-5 px-3">

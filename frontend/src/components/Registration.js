@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { registerSubscriber } from "../services/api"; // Adjust the path if needed
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // Don't forget the CSS
 
 export default function SubscriberRegistration() {
   const [formData, setFormData] = useState({
@@ -9,27 +11,26 @@ export default function SubscriberRegistration() {
     email: "",
   });
 
-  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    setError(null);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Basic validations
     if (!/^\d{10}$/.test(formData.mobileNumber)) {
-      setError("Mobile number must be exactly 10 digits.");
+      toast.error("Mobile number must be exactly 10 digits.");
       return;
     }
     if (!formData.name.trim()) {
-      setError("Name is required.");
+      toast.error("Name is required.");
       return;
     }
     if (!formData.email.trim() || !formData.email.includes("@")) {
-      setError("Valid email is required.");
+      toast.error("Valid email is required.");
       return;
     }
 
@@ -39,83 +40,92 @@ export default function SubscriberRegistration() {
         formData.name,
         formData.email
       );
-      // Navigate to login page after successful registration
-      navigate("/login");
+      toast.success("Registration successful! Redirecting to login...");
+      setTimeout(() => navigate("/login"), 2000);
     } catch (err) {
-      setError(
+      toast.error(
         err.response?.data || "Registration failed. Please try again later."
       );
     }
   };
 
   return (
-    <div
-      className="d-flex justify-content-center align-items-center min-vh-100 bg-light"
-      style={{ padding: "1rem" }}
-    >
+    <>
+      {/* Bootstrap Navbar */}
+      <nav className="navbar navbar-expand-lg navbar-dark bg-primary px-4">
+        <span className="navbar-brand fw-bold">📱 Telecom Registration Portal</span>
+      </nav>
+
+      {/* Toast Container */}
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
+
+      {/* Registration Form */}
       <div
-        className="bg-white rounded shadow p-4 animate__animated animate__fadeIn"
-        style={{ maxWidth: "400px", width: "100%" }}
+        className="d-flex justify-content-center align-items-center min-vh-100 bg-light"
+        style={{ padding: "1rem" }}
       >
-        <h2 className="mb-4 text-center">Subscriber Registration</h2>
+        <div
+          className="bg-white rounded shadow p-4 animate__animated animate__fadeIn"
+          style={{ maxWidth: "400px", width: "100%" }}
+        >
+          <h2 className="mb-4 text-center">Subscriber Registration</h2>
 
-        {error && <div className="alert alert-danger">{error}</div>}
+          <form onSubmit={handleSubmit} noValidate>
+            <div className="mb-3">
+              <label htmlFor="mobileNumber" className="form-label">
+                Mobile Number
+              </label>
+              <input
+                type="tel"
+                id="mobileNumber"
+                name="mobileNumber"
+                className="form-control"
+                value={formData.mobileNumber}
+                onChange={handleChange}
+                placeholder="Enter 10-digit mobile number"
+                maxLength={10}
+                required
+              />
+            </div>
 
-        <form onSubmit={handleSubmit} noValidate>
-          <div className="mb-3">
-            <label htmlFor="mobileNumber" className="form-label">
-              Mobile Number
-            </label>
-            <input
-              type="tel"
-              id="mobileNumber"
-              name="mobileNumber"
-              className="form-control"
-              value={formData.mobileNumber}
-              onChange={handleChange}
-              placeholder="Enter 10-digit mobile number"
-              maxLength={10}
-              required
-            />
-          </div>
+            <div className="mb-3">
+              <label htmlFor="name" className="form-label">
+                Full Name
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                className="form-control"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Enter full name"
+                required
+              />
+            </div>
 
-          <div className="mb-3">
-            <label htmlFor="name" className="form-label">
-              Full Name
-            </label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              className="form-control"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="Enter full name"
-              required
-            />
-          </div>
+            <div className="mb-3">
+              <label htmlFor="email" className="form-label">
+                Email Address
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                className="form-control"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Enter email"
+                required
+              />
+            </div>
 
-          <div className="mb-3">
-            <label htmlFor="email" className="form-label">
-              Email Address
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              className="form-control"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="Enter email"
-              required
-            />
-          </div>
-
-          <button type="submit" className="btn btn-primary w-100">
-            Register
-          </button>
-        </form>
+            <button type="submit" className="btn btn-primary w-100">
+              Register
+            </button>
+          </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
