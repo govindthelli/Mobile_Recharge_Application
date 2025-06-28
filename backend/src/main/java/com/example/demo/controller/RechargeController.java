@@ -21,7 +21,10 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/user")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {
+    "http://localhost:3000",
+    "https://mobile-recharge-frontend.onrender.com"
+})
 public class RechargeController {
     @Autowired
     private PlanRepository planRepository;
