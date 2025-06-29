@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { registerSubscriber } from "../services/api"; // Adjust the path if needed
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Don't forget the CSS
@@ -120,9 +120,17 @@ export default function SubscriberRegistration() {
               />
             </div>
 
-            <button type="submit" className="btn btn-primary w-100">
+            <button type="submit" className="btn btn-primary w-100 mb-2">
               Register
             </button>
+
+            {/* Login Redirect */}
+            <div className="text-center">
+              <span>Already have an account? </span>
+              <Link to="/login" className="text-decoration-none">
+                Login here
+              </Link>
+            </div>
           </form>
         </div>
       </div>
