@@ -8,7 +8,14 @@ import java.util.List;
 
 public interface SubscriberRepository extends JpaRepository<Subscriber, Long> {
     Subscriber findByMobileNumber(String mobileNumber);
+    
 
     @Query(value = "SELECT * FROM subscribers s WHERE s.plan_expiry <= DATE_ADD(CURRENT_DATE, INTERVAL 3 DAY) AND s.plan_expiry >= CURRENT_DATE", nativeQuery = true)
     List<Subscriber> findExpiringSubscribers();
+
+
+	boolean existsByMobileNumber(String mobileNumber);
+
+
+	boolean existsByEmail(String email);
 }

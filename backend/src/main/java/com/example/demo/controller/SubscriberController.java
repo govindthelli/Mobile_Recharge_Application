@@ -22,23 +22,7 @@ public class SubscriberController {
     @Autowired
     private RechargeRepository rechargeRepository;
     
-    @PostMapping("/subscriber/register")
-    public ResponseEntity<?> addSubscriber(@RequestBody Subscriber subscriber)
-    {
-    	 	if (subscriber.getMobileNumber() == null || !subscriber.getMobileNumber().matches("^[0-9]{10}$")) {
-    	        return ResponseEntity.badRequest().body("Invalid mobile number");
-    	    }
-    	    if (subscriber.getName() == null || subscriber.getName().trim().isEmpty()) {
-    	        return ResponseEntity.badRequest().body("Name is required");
-    	    }
-    	    if (subscriber.getEmail() == null || !subscriber.getEmail().contains("@")) {
-    	        return ResponseEntity.badRequest().body("Valid email is required");
-    	    }
-    	    
-    	    subscriber.setCreatedAt(LocalDate.now());
-    	    subscriberRepository.save(subscriber);
-    	    return ResponseEntity.ok("Subscriber registered successfully");
-    }
+    
 
     @GetMapping("/subscribers/expiring")
     public ResponseEntity<List<Subscriber>> getExpiringSubscribers() {

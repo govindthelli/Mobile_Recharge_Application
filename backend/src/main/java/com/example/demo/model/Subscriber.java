@@ -20,8 +20,12 @@ public class Subscriber {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	
+	@Column(unique = true,nullable = false)
 	private String mobileNumber;
 	private String name;
+	
+	@Column(unique = true,nullable = false)
 	private String email;
 	@ManyToOne
 	private Plan currentPlan;
