@@ -1,10 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-<<<<<<< HEAD
 import { registerSubscriber } from "../services/api";
-=======
-import { registerSubscriber } from "../services/api"; // Adjust the path if needed
->>>>>>> baa07311da8e2620b1917d6a8ccd6d0c5a8d1edc
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
