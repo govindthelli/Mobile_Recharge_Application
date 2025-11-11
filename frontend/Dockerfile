@@ -5,7 +5,7 @@ WORKDIR /app
 
 COPY package*.json ./
 RUN npm install
-RUN npx update-browserslist-db@latest
+RUN npx update-browserslist-db@latest --yes
 
 COPY . .
 RUN npm run build
