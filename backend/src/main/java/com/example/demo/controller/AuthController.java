@@ -26,7 +26,8 @@ import java.util.Date;
 @RequestMapping("/api/auth")
 @CrossOrigin(origins = {
     "http://localhost:3000",
-    "https://mobile-recharge-frontend.onrender.com"
+    "https://mobile-recharge-frontend.onrender.com",
+    "http://frontend:3000"
 })
 public class AuthController {
     @Autowired
