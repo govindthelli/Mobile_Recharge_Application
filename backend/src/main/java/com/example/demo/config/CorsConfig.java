@@ -9,7 +9,7 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
-                .allowedOrigins("http://localhost:3000","https://mobile-recharge-frontend.onrender.com","http://frontend:3000","http://3.82.227.113:3000")
+                .allowedOrigins("http://localhost:3000","https://mobile-recharge-frontend.onrender.com","http://frontend:3000","http://174.129.75.120:3000")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Explicitly allow OPTIONS
                 .allowedHeaders("*")
                 .exposedHeaders("Authorization") // Expose Authorization header if needed
