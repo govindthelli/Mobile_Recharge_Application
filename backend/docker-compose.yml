@@ -1,0 +1,33 @@
+version: '3'
+services:
+   backend:
+    build: ./backend
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: db
+      DB_USER: govind
+      DB_PASSWORD: govind123
+      DB_NAME: mobile_recharge
+    networks:
+      - app-network
+    depends_on:
+      - db
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+       MYSQL_ROOT_PASSWORD: root123
+       MYSQL_USER: govind
+       MYSQL_PASSWORD: govind123
+       MYSQL_DATABASE: mobile_recharge
+    networks:
+      - app-network
+    volumes:
+      - db_volume:/var/lib/mysql
+networks:
+  app-network:
+    driver: bridge
+volumes:
+  db_volume:
+    
