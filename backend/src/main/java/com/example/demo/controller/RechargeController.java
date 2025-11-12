@@ -23,7 +23,8 @@ import java.util.UUID;
 @RequestMapping("/api/user")
 @CrossOrigin(origins = {
     "http://localhost:3000",
-    "https://mobile-recharge-frontend.onrender.com"
+    "https://mobile-recharge-frontend.onrender.com",
+    "http://frontend:3000"
 })
 public class RechargeController {
     @Autowired
