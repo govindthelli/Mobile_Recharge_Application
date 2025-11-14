@@ -1,18 +1,23 @@
 package com.example.demo.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
+
+    @Autowired
+    private AllowedOriginsConfig allowedOriginsConfig;
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
-                .allowedOrigins("http://localhost:3000","https://mobile-recharge-frontend.onrender.com","http://frontend:3000","http://54.165.238.130:3000")
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Explicitly allow OPTIONS
+                .allowedOrigins(allowedOriginsConfig.getOrigins())
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
-                .exposedHeaders("Authorization") // Expose Authorization header if needed
+                .exposedHeaders("Authorization")
                 .allowCredentials(true);
     }
 }
