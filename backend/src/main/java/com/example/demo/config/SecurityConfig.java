@@ -24,6 +24,10 @@ public class SecurityConfig {
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    // ⭐ Add this to use ENV-based allowed origins
+    @Autowired
+    private AllowedOriginsConfig allowedOriginsConfig;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -32,7 +36,7 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .requestMatchers("/api/auth/admin/login", "/api/auth/validate-mobile","/api/auth/subscriber/register").permitAll()
+                .requestMatchers("/api/auth/admin/login", "/api/auth/validate-mobile", "/api/auth/subscriber/register").permitAll()
                 .requestMatchers("/api/user/**").permitAll()
                 .requestMatchers("/api/auth/admin/register").authenticated()
                 .requestMatchers("/api/admin/**").authenticated()
@@ -45,17 +49,22 @@ public class SecurityConfig {
                 .httpStrictTransportSecurity(hsts -> hsts.maxAgeInSeconds(31536000).includeSubDomains(true))
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000","https://mobile-recharge-frontend.onrender.com","http://frontend:3000","http://54.165.238.130:3000"));
+
+        // ⭐ Replace hardcoded origins with ENV-based origins
+        configuration.setAllowedOrigins(Arrays.asList(allowedOriginsConfig.getOrigins()));
+
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setExposedHeaders(Arrays.asList("Authorization"));
         configuration.setAllowCredentials(true);
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/api/**", configuration);
         return source;
