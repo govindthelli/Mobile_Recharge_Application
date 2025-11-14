@@ -11,7 +11,7 @@ pipeline {
     stage('deploy') {
       steps {
         sh '''
-          docker compose up -d || true
+          docker compose up -d --build || true
           '''
       }
     }
