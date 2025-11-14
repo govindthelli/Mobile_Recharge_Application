@@ -24,12 +24,12 @@ import java.util.Date;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = {
-    "http://localhost:3000",
-    "https://mobile-recharge-frontend.onrender.com",
-    "http://frontend:3000",
-    "http://54.165.238.130:3000"
-})
+// @CrossOrigin(origins = {
+//     "http://localhost:3000",
+//     "https://mobile-recharge-frontend.onrender.com",
+//     "http://frontend:3000",
+//     "http://54.165.238.130:3000"
+// })
 public class AuthController {
     @Autowired
     private AdminRepository adminRepository;
