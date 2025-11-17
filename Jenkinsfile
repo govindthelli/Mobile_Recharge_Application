@@ -4,14 +4,14 @@ pipeline {
     stage('build') {
       steps {
         sh '''
-          docker compose down -v || true
+          docker compose down --remove-orphans || true
           '''
       }
     }
     stage('deploy') {
       steps {
         sh '''
-          docker compose up -d --build || true
+          DOCKER_BUILDKIT=1 docker compose up --progress=plain || true
           '''
       }
     }
