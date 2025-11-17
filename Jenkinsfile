@@ -4,6 +4,7 @@ pipeline {
     stage('build') {
       steps {
         sh '''
+          docker rm -f $(docker ps -aq) || true
           DOCKER_BUILDKIT=1 docker compose down --remove-orphans || true
           '''
       }
