@@ -11,7 +11,7 @@ pipeline {
     stage('deploy') {
       steps {
         sh '''
-          DOCKER_BUILDKIT=1 docker compose up --progress=plain 
+          DOCKER_BUILDKIT=1 docker compose up 
           '''
       }
     }
