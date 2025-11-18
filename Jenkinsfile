@@ -3,7 +3,18 @@ pipeline {
 
     stages {
 
-        stage('Clean & Stop Old Containers') {
+        stage('Copy Code to EC2') {
+            steps {
+                sshagent(['app-ec2-key']) {
+                    sh '''
+                        echo "Copying workspace to EC2..."
+                        scp -o StrictHostKeyChecking=no -r $WORKSPACE/* ubuntu@98.86.175.197:/home/ubuntu/$JOB_NAME/
+                    '''
+                }
+            }
+        }
+
+        stage('Clean Old Containers') {
             steps {
                 sshagent(['app-ec2-key']) {
                     sh '''
@@ -13,8 +24,6 @@ pipeline {
                             docker ps -q | xargs -r docker stop;
                             docker ps -aq | xargs -r docker rm;
                             docker compose down --remove-orphans || true;
-                            docker network prune -f || true;
-                            docker volume prune -f || true;
                         "
                     '''
                 }
