@@ -2,13 +2,13 @@ pipeline {
     agent { label 'app-agent' }
 
     stages {
-        
+
         stage('Clean & Stop Old Containers') {
             steps {
                 sshagent(['app-ec2-key']) {
                     sh '''
                         ssh -o StrictHostKeyChecking=no ubuntu@98.86.175.197 "
-                            cd /home/ubuntu/recharge;
+                            cd /home/ubuntu/$JOB_NAME;
                             echo 'Stopping containers...';
                             docker ps -q | xargs -r docker stop;
                             docker ps -aq | xargs -r docker rm;
@@ -26,7 +26,7 @@ pipeline {
                 sshagent(['app-ec2-key']) {
                     sh '''
                         ssh -o StrictHostKeyChecking=no ubuntu@98.86.175.197 "
-                            cd /home/ubuntu/recharge;
+                            cd /home/ubuntu/$JOB_NAME;
                             echo 'Deploying...';
                             DOCKER_BUILDKIT=1 docker compose up --build -d;
                         "
