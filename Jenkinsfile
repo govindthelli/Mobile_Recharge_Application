@@ -8,6 +8,7 @@ pipeline {
                 sshagent(['app-ec2-key']) {
                     sh '''
                         ssh -o StrictHostKeyChecking=no ubuntu@98.86.175.197 "
+                            cd /home/ubuntu/recharge;
                             echo 'Stopping containers...';
                             docker ps -q | xargs -r docker stop;
                             docker ps -aq | xargs -r docker rm;
@@ -25,6 +26,7 @@ pipeline {
                 sshagent(['app-ec2-key']) {
                     sh '''
                         ssh -o StrictHostKeyChecking=no ubuntu@98.86.175.197 "
+                            cd /home/ubuntu/recharge;
                             echo 'Deploying...';
                             DOCKER_BUILDKIT=1 docker compose up --build -d;
                         "
