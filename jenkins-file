@@ -1,0 +1,25 @@
+pipeline {
+    agent { label 'app-agent' }
+
+    stages {
+
+
+        stage('Clean Old Containers') {
+            steps {
+                sh '''
+                    docker ps -q | xargs -r docker stop || true
+                    docker ps -aq | xargs -r docker rm || true
+                    docker compose down --remove-orphans || true
+                '''
+            }
+        }
+
+        stage('Deploy New Containers') {
+            steps {
+                sh '''
+                    DOCKER_BUILDKIT=1 docker compose up --build -d
+                '''
+            }
+        }
+    }
+}
