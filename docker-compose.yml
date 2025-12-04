@@ -8,40 +8,48 @@ services:
       - backend
     networks:
       - app-network
+
   backend:
     build: ./backend
     ports:
       - "8085:8080"
     environment:
-      DB_HOST: db
-      DB_USER: govind
-      DB_PASSWORD: govind123
-      DB_NAME: mobile_recharge
+        DB_HOST: database-1.cwziqu0uuvxn.us-east-1.rds.amazonaws.com
+        DB_PORT: 3306
+        DB_USER: admin
+        DB_PASSWORD: govind123
+        DB_NAME: recharge
+      # DB_HOST: db
+      # DB_USER: govind
+      # DB_PASSWORD: govind123
+      # DB_NAME: mobile_recharge
     networks:
       - app-network
-    depends_on:
-        db:
-          condition: service_healthy
-  db:
-    image: mysql:8.0
-    restart: always
-    environment:
-       MYSQL_ROOT_PASSWORD: root123
-       MYSQL_USER: govind
-       MYSQL_PASSWORD: govind123
-       MYSQL_DATABASE: mobile_recharge
-    healthcheck:
-       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-       interval: 5s
-       timeout: 3s
-       retries: 10
-    networks:
-      - app-network
-    volumes:
-      - db_volume:/var/lib/mysql
+    # depends_on:
+    #     db:
+    #       condition: service_healthy
+
+  # db:
+  #   image: mysql:8.0
+  #   restart: always
+  #   environment:
+  #      MYSQL_ROOT_PASSWORD: root123
+  #      MYSQL_USER: govind
+  #      MYSQL_PASSWORD: govind123
+  #      MYSQL_DATABASE: mobile_recharge
+  #   healthcheck:
+  #      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+  #      interval: 5s
+  #      timeout: 3s
+  #      retries: 10
+  #   networks:
+  #     - app-network
+  #   volumes:
+  #     - db_volume:/var/lib/mysql
+
 networks:
   app-network:
     driver: bridge
-volumes:
-  db_volume:
-    
+
+# volumes:
+#   db_volume:
