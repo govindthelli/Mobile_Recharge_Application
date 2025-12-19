@@ -13,6 +13,11 @@ RUN npm run build
 #stage 2
 FROM nginx:alpine
 
+RUN rm etc/nginx/conf.d/default.conf
+
+#changing configuration file
+COPY nginx.conf etc/nginx/conf.d/default.conf
+
 #/usr/share/nginx/html  it is the path for nginx image to host any apps.so,we need to kept build files in it
 COPY --from=build /app/build /usr/share/nginx/html
 
