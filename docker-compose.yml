@@ -2,6 +2,7 @@
 services:
   frontend:
     build: ./frontend
+    image: govindthelli/recharge:frontend
     ports:
       - "3000:80"
     depends_on:
@@ -11,6 +12,7 @@ services:
 
   backend:
     build: ./backend
+    image: govindthelli/recharge:backend
     environment:
       # RDS setup (commented as requested)
       # DB_HOST: database-1.cwziqu0uuvxn.us-east-1.rds.amazonaws.com
