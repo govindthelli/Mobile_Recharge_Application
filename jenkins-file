@@ -1,23 +1,44 @@
 pipeline {
-    agent { label 'app-agent' }
+    agent any
 
     stages {
-
-
-        stage('Clean Old Containers') {
+        stage('docker-login') {
+            steps {
+                withCrdentials([
+                    usernamePassword(
+                        credentialsId: 'docker-creds',
+                        usernameVariable: 'Docker_User',
+                        passwordVariable: 'Docker_Pass'
+                        
+                        )
+                    ])
+                    {
+                         sh '''
+                                  echo "$Docker_Pass" | docker login -u "$Docker_User" --password-stdin
+                             '''
+                    }
+            }
+        }
+        stage('build images') {
             steps {
                 sh '''
-                    docker ps -q | xargs -r docker stop || true
-                    docker ps -aq | xargs -r docker rm || true
-                    docker compose down --remove-orphans || true
+                    docker compose build --no-cache
                 '''
             }
         }
-
-        stage('Deploy New Containers') {
+        stage ('push-images-to-docker-hub') {
             steps {
                 sh '''
-                    DOCKER_BUILDKIT=1 docker compose up --build -d
+                    docker push govindthelli/recharge:frontend
+                    docker push govindthelli/recharge:backend
+                '''
+            }
+        }
+        stage('pull images and up containers') {
+            steps {
+                sh '''
+                    docker compose pull
+                    docker compose up -d --force-recreate
                 '''
             }
         }
