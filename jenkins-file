@@ -1,5 +1,13 @@
 pipeline {
-    agent any
+    agent { label 'ssh-agent-1'}
+
+    environment {
+        IMAGE_FRONT = "govindthelli/recharge:frontend",
+        IMAGE_BACK = "govindthelli/recharge:backend",
+        REMOTE_USER="ubuntu",
+        REMOTE_IP="54.172.75.29",
+        REMOTE_FOLDER="/home/ubuntu/app"
+    }
 
     stages {
         stage('docker-login') {
@@ -29,17 +37,36 @@ pipeline {
         stage ('push-images-to-docker-hub') {
             steps {
                 sh '''
-                    docker push govindthelli/recharge:frontend
-                    docker push govindthelli/recharge:backend
+                    docker push $IMAGE_FRONT
+                    docker push $IMAGE_BACK
                 '''
             }
         }
+        stage('create fodler and copy docker compose') {
+            steps {
+                sshagent(['ssh-creds']) {
+                    ssh '''
+                        ssh -o strictHostKeyChecking=no $REMOTE_USER@REMOTE_IP "mkdir -p $REMOTE_FOLDER;"
+                        scp -o strictHostKeyChecking=no docker-compose.yml $REMOTE_USER@REMOTE_IP:$REMOTE_FOLDER
+
+                    '''
+                }
+            }
+
+        }
         stage('pull images and up containers') {
             steps {
-                sh '''
-                    docker compose pull
-                    docker compose up -d --force-recreate
-                '''
+                sshagent(['ssh-creds']) {
+                    sh '''
+                        ssh -o strictHostKeyChecking=no $REMOTE_USER@REMOTE_IP "
+                            cd $REMOTE_FOLDER;
+                            docker compose pull;
+                            docker compose up -d --force-recreate;
+                        "
+                   
+                    '''
+                }
+                
             }
         }
     }
