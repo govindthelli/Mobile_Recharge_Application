@@ -2,10 +2,10 @@ pipeline {
     agent { label 'ssh-agent-1'}
 
     environment {
-        IMAGE_FRONT = "govindthelli/recharge:frontend",
-        IMAGE_BACK = "govindthelli/recharge:backend",
-        REMOTE_USER="ubuntu",
-        REMOTE_IP="54.172.75.29",
+        IMAGE_FRONT = "govindthelli/recharge:frontend"
+        IMAGE_BACK = "govindthelli/recharge:backend"
+        REMOTE_USER="ubuntu"
+        REMOTE_IP="54.172.75.29"
         REMOTE_FOLDER="/home/ubuntu/app"
     }
 
@@ -45,8 +45,8 @@ pipeline {
         stage('create fodler and copy docker compose') {
             steps {
                 sshagent(['ssh-creds']) {
-                    ssh '''
-                        ssh -o strictHostKeyChecking=no $REMOTE_USER@REMOTE_IP "mkdir -p $REMOTE_FOLDER;"
+                    sh '''
+                        ssh -o strictHostKeyChecking=no $REMOTE_USER@$REMOTE_IP "mkdir -p $REMOTE_FOLDER;"
                         scp -o strictHostKeyChecking=no docker-compose.yml $REMOTE_USER@REMOTE_IP:$REMOTE_FOLDER
 
                     '''
@@ -58,7 +58,7 @@ pipeline {
             steps {
                 sshagent(['ssh-creds']) {
                     sh '''
-                        ssh -o strictHostKeyChecking=no $REMOTE_USER@REMOTE_IP "
+                        ssh -o strictHostKeyChecking=no $REMOTE_USER@$REMOTE_IP "
                             cd $REMOTE_FOLDER;
                             docker compose pull;
                             docker compose up -d --force-recreate;
