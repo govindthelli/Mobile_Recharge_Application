@@ -1,9 +1,6 @@
 pipeline {
     agent { label 'ssh-agent-1'}
 
-    tools {
-        git 'Default'
-    }
 
 
     environment {
