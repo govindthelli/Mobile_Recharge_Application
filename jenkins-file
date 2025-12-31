@@ -49,7 +49,7 @@ pipeline {
                 sshagent(['ssh-creds']) {
                     sh '''
                         ssh -o strictHostKeyChecking=no $REMOTE_USER@$REMOTE_IP "mkdir -p $REMOTE_FOLDER;"
-                        scp -o strictHostKeyChecking=no docker-compose.yml $REMOTE_USER@REMOTE_IP:$REMOTE_FOLDER
+                        scp -o strictHostKeyChecking=no docker-compose.yml $REMOTE_USER@$REMOTE_IP:$REMOTE_FOLDER
 
                     '''
                 }
