@@ -1,6 +1,11 @@
 pipeline {
     agent { label 'ssh-agent-1'}
 
+    tools {
+        git 'Default'
+    }
+
+
     environment {
         IMAGE_FRONT = "govindthelli/recharge:frontend"
         IMAGE_BACK = "govindthelli/recharge:backend"
