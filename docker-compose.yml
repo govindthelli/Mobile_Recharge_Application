@@ -4,7 +4,8 @@ services:
     build: ./frontend
     #image: govindthelli/recharge:frontend
     ports:
-      - "3000:80"
+      - "80:80"
+      - "443:443"
     depends_on:
       - backend
     networks:
