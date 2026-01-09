@@ -4,7 +4,7 @@ services:
     build: ./frontend
     #image: govindthelli/recharge:frontend
     ports:
-      - "80:80"
+      - "3000:80"
     depends_on:
       - backend
     networks:
@@ -26,8 +26,8 @@ services:
       DB_USER: govind
       DB_PASSWORD: govind123
       DB_NAME: mobile_recharge
-    ports:
-      - "8080:8080"
+    # ports:
+    #   - "8080:8080"
     networks:
       - app-network
     depends_on:
