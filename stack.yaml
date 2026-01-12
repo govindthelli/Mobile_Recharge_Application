@@ -1,8 +1,7 @@
-version: '3.9'
 
 services:
   frontend:
-    build: ./frontend
+    image: govind/recharge-frontend:latest
     ports:
       - "3000:80"
     networks:
@@ -11,12 +10,12 @@ services:
       - backend
 
     deploy:
-      replicas: 1
+      replicas: 3
       restart_policy:
         condition: on-failure
 
   backend:
-    build: ./backend
+    image: govind/recharge-backend:latest
     environment:
       DB_HOST: db
       DB_USER: govind
@@ -25,7 +24,7 @@ services:
     networks:
       - app-network
     deploy:
-      replicas: 1
+      replicas: 3
       restart_policy:
         condition: on-failure
 
