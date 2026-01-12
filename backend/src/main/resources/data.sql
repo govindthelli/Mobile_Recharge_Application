@@ -1,0 +1,17 @@
+INSERT INTO plans (name, category, price, data, calls, sms, validity_days) VALUES
+('Basic Plan', 'Popular', 199, '1.5GB/day', 'Unlimited', '100/day', 28),
+('Standard Plan', 'Popular', 299, '2GB/day', 'Unlimited', '100/day', 28),
+('Premium Plan', 'Popular', 399, '3GB/day', 'Unlimited', 'Unlimited', 28),
+('Annual Plan', 'Validity', 2399, '1.5GB/day', 'Unlimited', '100/day', 365),
+('Half-Yearly Plan', 'Validity', 1599, '1.5GB/day', 'Unlimited', '100/day', 180),
+('Data Booster', 'Data', 98, '6GB', 'No', 'No', 28),
+('Unlimited Data', 'Unlimited', 599, 'Unlimited', 'Unlimited', '100/day', 28),
+('Special OTT Booster', 'Special', 249, '2GB/day', 'Unlimited Calls', '100/day', 28),
+('Weekend Super Saver', 'Popular', 219, '1.5GB/day', 'Unlimited', '100/day', 14),
+('Monthly Saver Plan', 'Validity', 399, '2GB/day', 'Unlimited', '100/day', 56),
+('High-Speed Data Top-Up', 'Data', 149, '12GB', 'No', 'No', 14),
+('Nonstop Streaming Pack', 'Unlimited', 799, 'Unlimited', 'Unlimited', 'Unlimited', 56),
+('Festival OTT Bundle', 'Special', 349, '3GB/day', 'Unlimited Calls', '100/day', 14),
+('Quarterly Value Pack', 'Validity', 999, '1.5GB/day', 'Unlimited', '100/day', 90),
+('Night Owl Booster', 'Data', 109, '5GB (12am-6am)', 'Unlimited', 'No', 7),
+('Daily Work Plan', 'Popular', 179, '1GB/day', 'Unlimited', '100/day', 14);
