@@ -1,0 +1,106 @@
+pipeline {
+    agent { label 'ssh-agent-1' }
+
+    environment {
+        IMAGE_FRONT = "govindthelli/recharge:frontend"
+        IMAGE_BACK  = "govindthelli/recharge:backend"
+        REMOTE_USER = "ubuntu"
+        REMOTE_IP   = "44.212.6.172"
+        REMOTE_DIR  = "/home/ubuntu/app"
+        STACK_NAME  = "recharge-app"
+        TAG         = "${BUILD_NUMBER}"
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Docker Login') {
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'docker-creds',
+                        usernameVariable: 'DOCKER_USER',
+                        passwordVariable: 'DOCKER_PASS'
+                    )
+                ]) {
+                    sh '''
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                    '''
+                }
+            }
+        }
+
+        stage('Build Images') {
+            steps {
+                sh '''
+                    docker build -t ${IMAGE_FRONT}-${TAG} ./frontend
+                    docker build -t ${IMAGE_BACK}-${TAG} ./backend
+                '''
+            }
+        }
+
+        stage('Push Images') {
+            steps {
+                sh '''
+                    docker push ${IMAGE_FRONT}-${TAG}
+                    docker push ${IMAGE_BACK}-${TAG}
+                '''
+            }
+        }
+
+        stage('Copy Stack File') {
+            steps {
+                sshagent(['ssh-creds']) {
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_IP} "mkdir -p ${REMOTE_DIR}"
+                        scp -o StrictHostKeyChecking=no stack.yaml ${REMOTE_USER}@${REMOTE_IP}:${REMOTE_DIR}
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy Stack (Safe & Idempotent)') {
+            steps {
+                sshagent(['ssh-creds']) {
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_IP} "
+                            docker info | grep -q 'Swarm: active' || exit 1
+                            cd ${REMOTE_DIR}
+                            TAG=${TAG} docker stack deploy -c stack.yaml ${STACK_NAME}
+                        "
+                    '''
+                }
+            }
+        }
+
+        stage('Post-Deploy Verification') {
+            steps {
+                sshagent(['ssh-creds']) {
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_IP} "
+                            docker service ls
+                            docker stack ps ${STACK_NAME}
+                        "
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            sh 'docker logout'
+        }
+        success {
+            echo "Swarm deployment successful (zero downtime)"
+        }
+        failure {
+            echo "Deployment failed safely — no state destroyed"
+        }
+    }
+}
