@@ -1,21 +1,21 @@
+version: "3.9"
 
 services:
   frontend:
-    image: govind/recharge-frontend:latest
+    image: govindthelli/recharge:frontend
     ports:
       - "3000:80"
     networks:
       - app-network
     depends_on:
       - backend
-
     deploy:
-      replicas: 1
+      replicas: 3
       restart_policy:
         condition: on-failure
 
   backend:
-    image: govind/recharge-backend:latest
+    image: govindthelli/recharge:backend
     environment:
       DB_HOST: db
       DB_USER: govind
@@ -24,32 +24,31 @@ services:
     networks:
       - app-network
     deploy:
-      replicas: 1
+      replicas: 3
       restart_policy:
         condition: on-failure
 
   db:
-  image: mysql:8.0
-  environment:
-    MYSQL_ROOT_PASSWORD: root123
-    MYSQL_USER: govind
-    MYSQL_PASSWORD: govind123
-    MYSQL_DATABASE: mobile_recharge
-  networks:
-    - app-network
-  volumes:
-    - db_volume:/var/lib/mysql
-  healthcheck:
-    test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-    interval: 10s
-    timeout: 5s
-    retries: 10
-  deploy:
-    replicas: 1
-    placement:
-      constraints:
-        - node.role == manager
-
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_USER: govind
+      MYSQL_PASSWORD: govind123
+      MYSQL_DATABASE: mobile_recharge
+    networks:
+      - app-network
+    volumes:
+      - db_volume:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
 
 networks:
   app-network:
