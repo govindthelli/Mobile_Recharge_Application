@@ -5,7 +5,7 @@ pipeline {
         IMAGE_FRONT = "govindthelli/recharge:frontend"
         IMAGE_BACK  = "govindthelli/recharge:backend"
         REMOTE_USER = "ubuntu"
-        REMOTE_IP   = "44.212.6.172"
+        REMOTE_IP   = "44.202.135.236"
         REMOTE_DIR  = "/home/ubuntu/app"
         STACK_NAME  = "recharge-app"
         TAG         = "${BUILD_NUMBER}"
