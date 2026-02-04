@@ -10,7 +10,7 @@ services:
     networks:
       - app-network
 
-  backend:
+  backend-service:
     build: ./backend
     #image: govindthelli/recharge:backend
     environment:
