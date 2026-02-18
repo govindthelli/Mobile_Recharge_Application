@@ -7,7 +7,7 @@ pipeline {
         IMAGE_FRONT = "govindthelli/recharge:frontend"
         IMAGE_BACK = "govindthelli/recharge:backend"
         REMOTE_USER="ubuntu"
-        REMOTE_IP="54.172.75.29"
+        REMOTE_IP="54.175.221.231"
         REMOTE_FOLDER="/home/ubuntu/app"
     }
 
