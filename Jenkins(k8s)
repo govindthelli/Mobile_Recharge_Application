@@ -1,0 +1,133 @@
+pipeline {
+    agent any
+
+    environment {
+        AWS_REGION = 'ap-south-1'
+        AWS_ACCOUNT_ID = '719857072312'
+
+        ECR_BACKEND = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/mobile-recharge-backend"
+        ECR_FRONTEND = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/mobile-recharge-frontend"
+
+        EKS_CLUSTER = 'mobile-recharge-eks'
+
+        AWS_CREDENTIALS = 'aws-ecr-eks'
+
+        IMAGE_TAG = "${BUILD_NUMBER}"
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build Backend Image') {
+            steps {
+                sh '''
+                    docker build \
+                      -t ${ECR_BACKEND}:${IMAGE_TAG} \
+                      ./backend
+                '''
+            }
+        }
+
+        stage('Build Frontend Image') {
+            steps {
+                sh '''
+                    docker build \
+                      -t ${ECR_FRONTEND}:${IMAGE_TAG} \
+                      ./frontend
+                '''
+            }
+        }
+
+        stage('Login to Amazon ECR') {
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: "${AWS_CREDENTIALS}",
+                        usernameVariable: 'AWS_ACCESS_KEY_ID',
+                        passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+                    )
+                ]) {
+                    sh '''
+                        set +x
+
+                        aws ecr get-login-password \
+                          --region ${AWS_REGION} |
+                        docker login \
+                          --username AWS \
+                          --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+                    '''
+                }
+            }
+        }
+
+        stage('Push Images to ECR') {
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: "${AWS_CREDENTIALS}",
+                        usernameVariable: 'AWS_ACCESS_KEY_ID',
+                        passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+                    )
+                ]) {
+                    sh '''
+                        docker push ${ECR_BACKEND}:${IMAGE_TAG}
+                        docker push ${ECR_FRONTEND}:${IMAGE_TAG}
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy to EKS') {
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: "${AWS_CREDENTIALS}",
+                        usernameVariable: 'AWS_ACCESS_KEY_ID',
+                        passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+                    )
+                ]) {
+                    sh '''
+                        set +x
+
+                        aws eks update-kubeconfig \
+                          --region ${AWS_REGION} \
+                          --name ${EKS_CLUSTER}
+
+                        kubectl set image deployment/backend \
+                          backend=${ECR_BACKEND}:${IMAGE_TAG}
+
+                        kubectl set image deployment/frontend \
+                          frontend=${ECR_FRONTEND}:${IMAGE_TAG}
+
+                        kubectl rollout status deployment/backend --timeout=5m
+                        kubectl rollout status deployment/frontend --timeout=5m
+                    '''
+                }
+            }
+        }
+
+        stage('Verify Deployment') {
+            steps {
+                sh '''
+                    kubectl get pods -o wide
+                    kubectl get services
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Mobile Recharge application deployed successfully to EKS.'
+        }
+
+        failure {
+            echo 'Deployment failed. Check the Jenkins console output.'
+        }
+    }
+}
