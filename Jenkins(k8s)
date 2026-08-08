@@ -113,10 +113,25 @@ pipeline {
 
         stage('Verify Deployment') {
             steps {
-                sh '''
-                    kubectl get pods -o wide
-                    kubectl get services
-                '''
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: "${AWS_CREDENTIALS}",
+                        usernameVariable: 'AWS_ACCESS_KEY_ID',
+                        passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+                    )
+                ]) {
+                    sh '''
+                        set +x
+
+                        aws eks update-kubeconfig \
+                          --region ${AWS_REGION} \
+                          --name ${EKS_CLUSTER}
+
+                        kubectl get nodes -o wide
+                        kubectl get pods -o wide
+                        kubectl get services
+                    '''
+                }
             }
         }
     }
