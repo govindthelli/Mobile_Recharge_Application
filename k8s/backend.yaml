@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      initContainers:
+        - name: wait-for-mysql
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - |
+              until nc -z db 3306; do
+                echo "Waiting for MySQL..."
+                sleep 3
+              done
+              echo "MySQL is available"
+      containers:
+        - name: backend
+          image: 719857072312.dkr.ecr.ap-south-1.amazonaws.com/mobile-recharge-backend:1.0
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_HOST
+              value: "db"
+            - name: DB_PORT
+              value: "3306"
+            - name: DB_USER
+              value: "govind"
+            - name: DB_PASSWORD
+              value: "govind123"
+            - name: DB_NAME
+              value: "mobile_recharge"
+            - name: APP_ALLOWED_ORIGINS
+              value: "http://acbc61e4c863740cbb5ec2f4b2bbc5a1-1459155648.ap-south-1.elb.amazonaws.com"
+            - name: SPRING_MAIL_USERNAME
+              value: "mobicommservicesltd@gmail.com"
+            - name: SPRING_MAIL_PASSWORD
+              value: "qgdjvtykqfoyidr"
+            - name: JWT_SECRET
+              value: "zX7b2k9pQvW8mT3rY5uJ1nL4hC6xF2tD0gP8iE9oA3qB5wR7yU2mN4vK6jZ8lM0tS9eH1cV3xB2nF4rT6pW8qL=="
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 20
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+spec:
+  selector:
+    app: backend
+  ports:
+    - port: 8080
+      targetPort: 8080
+  type: ClusterIP
