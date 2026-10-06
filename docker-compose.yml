@@ -19,7 +19,7 @@ services:
       DB_PORT: 3306
       DB_USER: admin
       DB_PASSWORD: Govind123
-      DB_NAME: recharge
+      DB_NAME: mobile_recharge
 
       # Local DB setup (enabled)
       # DB_HOST: db
