@@ -1,0 +1,19 @@
+
+name: My First CI Pipeline
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Print message
+        run: echo "Hello from GitHub Actions"
+
+      - name: Check Git version
+        run: git --version
+
+      - name: List files
+        run: ls -la
